@@ -10,6 +10,7 @@ namespace AlgDnD
     {
         static void Main(string[] args)
         {
+            Dungeon d = new Dungeon();
         }
     }
 }
