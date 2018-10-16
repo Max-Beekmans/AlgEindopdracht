@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlgDnD
+namespace AlgDnD.Domain
 {
     public class Hall
     {
