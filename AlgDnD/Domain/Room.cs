@@ -8,36 +8,32 @@ namespace AlgDnD.Domain
 {
     public class Room
     {
-        private List<Hall> _adjacentEdges;
-        private bool _isBegin = false;
-        private bool _isEnd = false;
-        private bool _visited = false;
-        
-        public Room()
+        //private List<Hall> _adjacentEdges;
+
+        public bool IsStart { get; set; }
+        public bool IsEnd { get; set; }
+        public bool IsVisited { get; set; }
+
+        public Hall North { get; set; }
+        public Hall South { get; set; }
+        public Hall West { get; set; }
+        public Hall East { get; set; }
+
+        public int Id { get; set; }
+
+
+        public Room(int id)
         {
-            _adjacentEdges = new List<Hall>();
+            Id = id;
+            North = null;
+            South = null;
+            West = null;
+            East = null;
         }
 
-        public void AddEdge(Hall edge)
+        public override string ToString()
         {
-            if (edge != null) {
-                _adjacentEdges.Add(edge);
-            }
-        }
-
-        public void DeleteEdge(Hall edge)
-        {
-            //have some min spanning tree stuff here probably?
-            if (edge != null && _adjacentEdges.Count > 1) {
-                _adjacentEdges.Remove(edge);
-            }
-        }
-
-        public void AddRoomConnection(Room a)
-        {
-            Hall connection = new Hall(this, a, 6);
-            this.AddEdge(connection);
-            a.AddEdge(connection);
+            return IsStart ? "- S -" : (IsEnd ? "- E -" : (IsVisited ? "- * -" : "- X -"));
         }
     }
 }

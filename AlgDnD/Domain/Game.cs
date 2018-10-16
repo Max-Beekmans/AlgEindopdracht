@@ -40,7 +40,7 @@ namespace AlgDnD.Domain
             }
         }
 
-        public void generateDungeon(int width, int height)
+        public void CreateDungeon(int width, int height)
         {
             _dungeon = new Dungeon(width, height);
         }

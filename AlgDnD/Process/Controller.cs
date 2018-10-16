@@ -33,7 +33,7 @@ namespace AlgDnD.Process
             int width = _inputView.AskForWidth();
             int height = _inputView.AskForHeight();
             _game = new Game();
-            _game.generateDungeon(width, height);
+            _game.CreateDungeon(width, height);
             _outputview.Game = _game;
             _outputview.DrawDungeon();
             _game.Start();

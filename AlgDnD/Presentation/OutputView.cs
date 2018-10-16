@@ -27,6 +27,7 @@ namespace AlgDnD.Presentation
             Console.Title = "RogueLike";
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine(AlgDnD.Properties.Resources.WelcomeMessage);
+
             Console.ReadKey(true);
         }
 
@@ -65,9 +66,43 @@ namespace AlgDnD.Presentation
             sb.Append(AlgDnD.Properties.Resources.Header);
 
             //Loop through graph and print the rooms and halls
-            Console.WriteLine("DUNGEON - " + _game.Dungeon.Width + " x " + _game.Dungeon.Height);
+            for(int y = 0;  y < _game.Dungeon.ViewGrid.GetLength(0); y++)
+            {
+                PrintVerticalLines(sb);
+                PrintHorizontal(sb, y);
+                PrintVerticalLines(sb);
+                PrintVerticalHalls(sb, y);
 
+            }
+            Console.Write(sb);
             _drawing = false;
+        }
+
+        private void PrintHorizontal(StringBuilder sb, int y)
+        {
+            for (int x = 0; x < _game.Dungeon.ViewGrid.GetLength(1); x++)
+            {
+                sb.Append(_game.Dungeon.ViewGrid[x, y]?.ToString() ?? "");
+                sb.Append(_game.Dungeon.ViewGrid[x, y]?.East?.ToString() ?? "   ");
+            }
+            sb.Append("\r\n");
+        }
+
+        private void PrintVerticalLines(StringBuilder sb)
+        {
+            for (int x = 0; x < _game.Dungeon.ViewGrid.GetLength(1); x++)
+            {
+                sb.Append("  |     ");
+            }
+            sb.Append("\r\n");
+        }
+        private void PrintVerticalHalls(StringBuilder sb, int y)
+        {
+            for (int x = 0; x < _game.Dungeon.ViewGrid.GetLength(1); x++)
+            {
+                sb.Append(" " + (_game.Dungeon.ViewGrid[x, y]?.South?.ToString() ?? "   ") +"    ");
+            }
+            sb.Append("\r\n");
         }
     }
 }
