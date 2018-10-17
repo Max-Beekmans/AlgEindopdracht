@@ -68,7 +68,7 @@ namespace AlgDnD.Presentation
             sb.Append(AlgDnD.Properties.Resources.Header);
 
             //Loop through graph and print the rooms and halls
-            for(int y = 0;  y < _game.Dungeon.ViewGrid.GetLength(0); y++)
+            for(int y = 0;  y < _game.Dungeon.ViewGrid.GetLength(1); y++)
             {
                 PrintVerticalLines(sb);
                 PrintHorizontal(sb, y);
@@ -91,7 +91,7 @@ namespace AlgDnD.Presentation
 
         private void PrintHorizontal(StringBuilder sb, int y)
         {
-            for (int x = 0; x < _game.Dungeon.ViewGrid.GetLength(1); x++)
+            for (int x = 0; x < _game.Dungeon.ViewGrid.GetLength(0); x++)
             {
                 sb.Append(_game.Dungeon.ViewGrid[x, y]?.ToString() ?? "");
                 sb.Append(_game.Dungeon.ViewGrid[x, y]?.East?.ToString() ?? "   ");
@@ -101,7 +101,7 @@ namespace AlgDnD.Presentation
 
         private void PrintVerticalLines(StringBuilder sb)
         {
-            for (int x = 0; x < _game.Dungeon.ViewGrid.GetLength(1); x++)
+            for (int x = 0; x < _game.Dungeon.ViewGrid.GetLength(0); x++)
             {
                 sb.Append("  |     ");
             }
@@ -109,7 +109,7 @@ namespace AlgDnD.Presentation
         }
         private void PrintVerticalHalls(StringBuilder sb, int y)
         {
-            for (int x = 0; x < _game.Dungeon.ViewGrid.GetLength(1); x++)
+            for (int x = 0; x < _game.Dungeon.ViewGrid.GetLength(0); x++)
             {
                 sb.Append(" " + (_game.Dungeon.ViewGrid[x, y]?.South?.ToString() ?? "   ") +"    ");
             }

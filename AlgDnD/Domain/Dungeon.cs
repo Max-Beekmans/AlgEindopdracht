@@ -31,9 +31,9 @@ namespace AlgDnD.Domain
         public void InitializeGrid()
         {
             ViewGrid = new Room[Width, Height];
-            for (int y = 0; y < ViewGrid.GetLength(0); y++)
+            for (int x = 0; x < ViewGrid.GetLength(0); x++)
             {
-                for (int x = 0; x < ViewGrid.GetLength(1); x++)
+                for (int y = 0; y < ViewGrid.GetLength(1); y++)
                 {
                     ViewGrid[x, y] = new Room((x + 1) * (y + 1));
                 }
@@ -63,17 +63,18 @@ namespace AlgDnD.Domain
             ViewGrid[endX, endY].IsEnd = true;
             End = ViewGrid[endX, endY];
 
-            for (int y = 0; y < ViewGrid.GetLength(0); y++)
+            for (int x = 0; x < ViewGrid.GetLength(0); x++)
             {
-                for(int x = 0; x < ViewGrid.GetLength(1); x++)
+                for(int y = 0; y < ViewGrid.GetLength(1); y++)
                 {
-                    if (x+1 < ViewGrid.GetLength(1))
+                    //Width range check
+                    if (x + 1 < ViewGrid.GetLength(0))
                     {
                         ViewGrid[x, y] = LinkRooms(ViewGrid[x, y], ViewGrid[x + 1, y], "horizontal")[0];
                         ViewGrid[x + 1, y] = LinkRooms(ViewGrid[x, y], ViewGrid[x + 1, y], "horizontal")[1];
                     }
-
-                    if(y+1 < ViewGrid.GetLength(0))
+                    //Height range check
+                    if(y + 1 < ViewGrid.GetLength(1))
                     {
                         ViewGrid[x, y] = LinkRooms(ViewGrid[x, y], ViewGrid[x, y + 1], "vertical")[0];
                         ViewGrid[x, y + 1] = LinkRooms(ViewGrid[x, y], ViewGrid[x, y + 1], "vertical")[1];
@@ -101,6 +102,7 @@ namespace AlgDnD.Domain
             }
             return linkedRooms;
         }
+
         public int BreadthFirstSearch()
         {
             Queue<Room> queue = new Queue<Room>();
