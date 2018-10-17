@@ -124,27 +124,64 @@ namespace AlgDnD.Domain
                     return distance;
                 }
 
-                if(room.North != null && !room.North.IsDestroyed && !visited.Contains(room.North.endb) && !queue.Contains(room.North.endb))
+                Room north_end = null;
+                if (room.North != null) {
+                    if (room.North.enda == room) {
+                        north_end = room.North.endb;
+                    } else {
+                        north_end = room.North.enda;
+                    }
+                }
+
+                Room south_end = null;
+                if (room.South != null) {
+                    if (room.South.enda == room) {
+                        south_end = room.South.endb;
+                    } else {
+                        south_end = room.South.enda;
+                    }
+                }
+
+
+                Room west_end = null;
+                if (room.West != null) {
+                    if (room.West.enda == room) {
+                        west_end = room.West.endb;
+                    } else {
+                        west_end = room.West.enda;
+                    }
+                }
+
+                Room east_end = null;
+                if (room.East != null) {
+                    if (room.East.enda == room) {
+                        east_end = room.East.endb;
+                    } else {
+                        east_end = room.East.enda;
+                    }
+                }
+
+                if (room.North != null && !room.North.IsDestroyed && !visited.Contains(north_end) && !queue.Contains(north_end))
                 {
-                    queue.Enqueue(room.North.endb);
+                    queue.Enqueue(north_end);
                     distQueue.Enqueue(distance + 1);
                 }
 
-                if (room.South != null && !room.South.IsDestroyed && !visited.Contains(room.South.endb) && !queue.Contains(room.South.endb))
+                if (room.South != null && !room.South.IsDestroyed && !visited.Contains(south_end) && !queue.Contains(south_end))
                 {
-                    queue.Enqueue(room.South.endb);
+                    queue.Enqueue(south_end);
                     distQueue.Enqueue(distance + 1);
                 }
 
-                if (room.West != null && !room.West.IsDestroyed && !visited.Contains(room.West.endb) && !queue.Contains(room.West.endb))
+                if (room.West != null && !room.West.IsDestroyed && !visited.Contains(west_end) && !queue.Contains(west_end))
                 {
-                    queue.Enqueue(room.West.endb);
+                    queue.Enqueue(west_end);
                     distQueue.Enqueue(distance + 1);
                 }
 
-                if (room.East != null && !room.East.IsDestroyed && !visited.Contains(room.East.endb) && !queue.Contains(room.East.endb))
+                if (room.East != null && !room.East.IsDestroyed && !visited.Contains(east_end) && !queue.Contains(east_end))
                 {
-                    queue.Enqueue(room.East.endb);
+                    queue.Enqueue(east_end);
                     distQueue.Enqueue(distance + 1);
                 }
             }

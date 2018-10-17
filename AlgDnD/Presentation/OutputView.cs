@@ -11,8 +11,23 @@ namespace AlgDnD.Presentation
     {
         private Game _game;
         private bool _drawing;
-        
-        public bool IsTalismanOn { get; set; }
+
+        //temp var to not run bfs just once
+        private int _distance = 0;
+        private bool _talisman = false;
+
+        public bool IsTalismanOn
+        {
+            get
+            {
+                return _talisman;
+            }
+            set
+            {
+                _talisman = value;
+                _distance = 0;
+            }
+        }
 
         public Game Game
         {
@@ -84,7 +99,10 @@ namespace AlgDnD.Presentation
         {
             if(IsTalismanOn)
             {
-                sb.Append("De talisman licht op en fluistert dat het eindpunt " + _game.Dungeon.BreadthFirstSearch() + " stappen ver weg is");
+                if (_distance == 0) {
+                    _distance = _game.Dungeon.BreadthFirstSearch();
+                }
+                sb.Append("De talisman licht op en fluistert dat het eindpunt " + _distance + " stappen ver weg is");
                 sb.Append("\r\n");
             }
         }
