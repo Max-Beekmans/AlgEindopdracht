@@ -31,17 +31,15 @@ namespace AlgDnD.Domain
         public void InitializeGrid()
         {
             ViewGrid = new Room[Width, Height];
-            for (int x = 0; x < ViewGrid.GetLength(0); x++)
-            {
-                for (int y = 0; y < ViewGrid.GetLength(1); y++)
-                {
+            for (int x = 0; x < ViewGrid.GetLength(0); x++) {
+                for (int y = 0; y < ViewGrid.GetLength(1); y++) {
                     ViewGrid[x, y] = new Room((x + 1) * (y + 1));
                 }
             }
         }
 
         public void Generate()
-        { 
+        {
             int startX = _random.Next(Width);
             int startY = _random.Next(Height);
 
@@ -49,33 +47,27 @@ namespace AlgDnD.Domain
             Start = ViewGrid[startX, startY];
 
             int endX = _random.Next(Width);
-            while(endX == startX)
-            {
+            while (endX == startX) {
                 endX = _random.Next(Width);
             }
 
             int endY = _random.Next(Height);
-            while (endY == startY)
-            {
+            while (endY == startY) {
                 endY = _random.Next(Height);
             }
 
             ViewGrid[endX, endY].IsEnd = true;
             End = ViewGrid[endX, endY];
 
-            for (int x = 0; x < ViewGrid.GetLength(0); x++)
-            {
-                for(int y = 0; y < ViewGrid.GetLength(1); y++)
-                {
+            for (int x = 0; x < ViewGrid.GetLength(0); x++) {
+                for (int y = 0; y < ViewGrid.GetLength(1); y++) {
                     //Width range check
-                    if (x + 1 < ViewGrid.GetLength(0))
-                    {
+                    if (x + 1 < ViewGrid.GetLength(0)) {
                         ViewGrid[x, y] = LinkRooms(ViewGrid[x, y], ViewGrid[x + 1, y], "horizontal")[0];
                         ViewGrid[x + 1, y] = LinkRooms(ViewGrid[x, y], ViewGrid[x + 1, y], "horizontal")[1];
                     }
                     //Height range check
-                    if(y + 1 < ViewGrid.GetLength(1))
-                    {
+                    if (y + 1 < ViewGrid.GetLength(1)) {
                         ViewGrid[x, y] = LinkRooms(ViewGrid[x, y], ViewGrid[x, y + 1], "vertical")[0];
                         ViewGrid[x, y + 1] = LinkRooms(ViewGrid[x, y], ViewGrid[x, y + 1], "vertical")[1];
                     }
@@ -87,14 +79,12 @@ namespace AlgDnD.Domain
         {
             Room[] linkedRooms = new Room[2];
             Hall hall = new Hall(a, b, _random.Next(10));
-            if(orientation == "horizontal")
-            {
+            if (orientation == "horizontal") {
                 a.East = hall;
                 b.West = hall;
                 linkedRooms[0] = a;
                 linkedRooms[1] = b;
-            } else
-            {
+            } else {
                 a.South = hall;
                 b.North = hall;
                 linkedRooms[0] = a;
@@ -112,81 +102,54 @@ namespace AlgDnD.Domain
             queue.Enqueue(Start);
             distQueue.Enqueue(0);
 
-            while(queue.Count > 0)
-            {
+            while (queue.Count > 0) {
                 Room room = queue.Dequeue();
                 int distance = distQueue.Dequeue();
                 room.IsVisited = true;
                 visited.Add(room);
 
-                if (room == End)
-                {
+                if (room == End) {
                     return distance;
                 }
 
-                Room north_end = null;
-                if (room.North != null) {
-                    if (room.North.enda == room) {
-                        north_end = room.North.endb;
-                    } else {
-                        north_end = room.North.enda;
-                    }
-                }
+                Room north_end = CheckHall(room.North, room);
+                Room south_end = CheckHall(room.South, room);
+                Room west_end = CheckHall(room.West, room);
+                Room east_end = CheckHall(room.East, room);
 
-                Room south_end = null;
-                if (room.South != null) {
-                    if (room.South.enda == room) {
-                        south_end = room.South.endb;
-                    } else {
-                        south_end = room.South.enda;
-                    }
-                }
-
-
-                Room west_end = null;
-                if (room.West != null) {
-                    if (room.West.enda == room) {
-                        west_end = room.West.endb;
-                    } else {
-                        west_end = room.West.enda;
-                    }
-                }
-
-                Room east_end = null;
-                if (room.East != null) {
-                    if (room.East.enda == room) {
-                        east_end = room.East.endb;
-                    } else {
-                        east_end = room.East.enda;
-                    }
-                }
-
-                if (room.North != null && !room.North.IsDestroyed && !visited.Contains(north_end) && !queue.Contains(north_end))
-                {
+                if (room.North != null && !room.North.IsDestroyed && !visited.Contains(north_end) && !queue.Contains(north_end)) {
                     queue.Enqueue(north_end);
                     distQueue.Enqueue(distance + 1);
                 }
 
-                if (room.South != null && !room.South.IsDestroyed && !visited.Contains(south_end) && !queue.Contains(south_end))
-                {
+                if (room.South != null && !room.South.IsDestroyed && !visited.Contains(south_end) && !queue.Contains(south_end)) {
                     queue.Enqueue(south_end);
                     distQueue.Enqueue(distance + 1);
                 }
 
-                if (room.West != null && !room.West.IsDestroyed && !visited.Contains(west_end) && !queue.Contains(west_end))
-                {
+                if (room.West != null && !room.West.IsDestroyed && !visited.Contains(west_end) && !queue.Contains(west_end)) {
                     queue.Enqueue(west_end);
                     distQueue.Enqueue(distance + 1);
                 }
 
-                if (room.East != null && !room.East.IsDestroyed && !visited.Contains(east_end) && !queue.Contains(east_end))
-                {
+                if (room.East != null && !room.East.IsDestroyed && !visited.Contains(east_end) && !queue.Contains(east_end)) {
                     queue.Enqueue(east_end);
                     distQueue.Enqueue(distance + 1);
                 }
             }
 
             return -1;
+        }
+
+        private Room CheckHall(Hall h, Room r)
+        {
+            if (h == null || r == null)
+                return null;
+
+            if(h.enda == r) {
+                return h.endb;
+            }
+            return h.enda;
         }
     }
 }
