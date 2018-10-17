@@ -117,22 +117,22 @@ namespace AlgDnD.Domain
                 Room west_end = CheckHall(room.West, room);
                 Room east_end = CheckHall(room.East, room);
 
-                if (room.North != null && !room.North.IsDestroyed && !visited.Contains(north_end) && !queue.Contains(north_end)) {
+                if (north_end != null && !visited.Contains(north_end) && !queue.Contains(north_end)) {
                     queue.Enqueue(north_end);
                     distQueue.Enqueue(distance + 1);
                 }
 
-                if (room.South != null && !room.South.IsDestroyed && !visited.Contains(south_end) && !queue.Contains(south_end)) {
+                if (south_end != null && !visited.Contains(south_end) && !queue.Contains(south_end)) {
                     queue.Enqueue(south_end);
                     distQueue.Enqueue(distance + 1);
                 }
 
-                if (room.West != null && !room.West.IsDestroyed && !visited.Contains(west_end) && !queue.Contains(west_end)) {
+                if (west_end != null && !visited.Contains(west_end) && !queue.Contains(west_end)) {
                     queue.Enqueue(west_end);
                     distQueue.Enqueue(distance + 1);
                 }
 
-                if (room.East != null && !room.East.IsDestroyed && !visited.Contains(east_end) && !queue.Contains(east_end)) {
+                if (east_end != null && !visited.Contains(east_end) && !queue.Contains(east_end)) {
                     queue.Enqueue(east_end);
                     distQueue.Enqueue(distance + 1);
                 }
@@ -141,9 +141,11 @@ namespace AlgDnD.Domain
             return -1;
         }
 
+        //return null if any of the params are null or if the hall is destroyed
+        //return opposite end of the hall adjacent to the room
         private Room CheckHall(Hall h, Room r)
         {
-            if (h == null || r == null)
+            if (h == null || r == null || h.IsDestroyed)
                 return null;
 
             if(h.enda == r) {
