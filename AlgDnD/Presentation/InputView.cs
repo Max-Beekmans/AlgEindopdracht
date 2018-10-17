@@ -34,5 +34,23 @@ namespace AlgDnD.Presentation
                 return AskForHeight();
             }
         }
+
+        public virtual int AskForInput()
+        {
+            while (true)
+            {
+                ConsoleKey key = Console.ReadKey(true).Key;
+                switch (key)
+                {
+                    case ConsoleKey.T: return 1;
+                    case ConsoleKey.H: return 2;
+                    case ConsoleKey.C: return 3;
+                    case ConsoleKey.G: return 4;
+                    default:
+                        Console.WriteLine("Invalid input!");
+                        continue;
+                }
+            }
+        }
     }
 }

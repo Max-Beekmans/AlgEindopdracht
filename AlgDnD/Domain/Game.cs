@@ -44,8 +44,5 @@ namespace AlgDnD.Domain
         {
             _dungeon = new Dungeon(width, height);
         }
-
-
-
     }
 }

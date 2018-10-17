@@ -43,6 +43,26 @@ namespace AlgDnD.Process
 
         public void ParseInput()
         {
+            while (_running)
+            {
+                int input = _inputView.AskForInput();
+                switch (input)
+                {
+                    case 1:
+                        _outputview.IsTalismanOn = !_outputview.IsTalismanOn;
+                        break;
+                    case 2:
+                            
+                        break;
+                    case 3:
+                            
+                        break;
+                    case 4:
+                        _game.Dungeon.InitializeGrid();
+                        _game.Dungeon.Generate();
+                        break;
+                }
+            }
         }
     }
 }

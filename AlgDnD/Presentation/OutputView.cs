@@ -11,6 +11,8 @@ namespace AlgDnD.Presentation
     {
         private Game _game;
         private bool _drawing;
+        
+        public bool IsTalismanOn { get; set; }
 
         public Game Game
         {
@@ -72,10 +74,19 @@ namespace AlgDnD.Presentation
                 PrintHorizontal(sb, y);
                 PrintVerticalLines(sb);
                 PrintVerticalHalls(sb, y);
-
             }
+            PrintMessage(sb);
             Console.Write(sb);
             _drawing = false;
+        }
+
+        public void PrintMessage(StringBuilder sb)
+        {
+            if(IsTalismanOn)
+            {
+                sb.Append("De talisman licht op en fluistert dat het eindpunt " + _game.Dungeon.BreadthFirstSearch() + " stappen ver weg is");
+                sb.Append("\r\n");
+            }
         }
 
         private void PrintHorizontal(StringBuilder sb, int y)

@@ -28,7 +28,7 @@ namespace AlgDnD.Domain
             Generate();
         }
 
-        private void InitializeGrid()
+        public void InitializeGrid()
         {
             ViewGrid = new Room[Width, Height];
             for (int y = 0; y < ViewGrid.GetLength(0); y++)
@@ -40,12 +40,13 @@ namespace AlgDnD.Domain
             }
         }
 
-        private void Generate()
+        public void Generate()
         { 
             int startX = _random.Next(Width);
             int startY = _random.Next(Height);
 
             ViewGrid[startX, startY].IsStart = true;
+            Start = ViewGrid[startX, startY];
 
             int endX = _random.Next(Width);
             while(endX == startX)
@@ -60,8 +61,9 @@ namespace AlgDnD.Domain
             }
 
             ViewGrid[endX, endY].IsEnd = true;
+            End = ViewGrid[endX, endY];
 
-            for(int y = 0; y < ViewGrid.GetLength(0); y++)
+            for (int y = 0; y < ViewGrid.GetLength(0); y++)
             {
                 for(int x = 0; x < ViewGrid.GetLength(1); x++)
                 {
@@ -98,6 +100,54 @@ namespace AlgDnD.Domain
                 linkedRooms[1] = b;
             }
             return linkedRooms;
+        }
+        public int BreadthFirstSearch()
+        {
+            Queue<Room> queue = new Queue<Room>();
+            Queue<int> distQueue = new Queue<int>();
+            HashSet<Room> visited = new HashSet<Room>();
+
+            queue.Enqueue(Start);
+            distQueue.Enqueue(0);
+
+            while(queue.Count > 0)
+            {
+                Room room = queue.Dequeue();
+                int distance = distQueue.Dequeue();
+                room.IsVisited = true;
+                visited.Add(room);
+
+                if (room == End)
+                {
+                    return distance;
+                }
+
+                if(room.North != null && !room.North.IsDestroyed && !visited.Contains(room.North.endb) && !queue.Contains(room.North.endb))
+                {
+                    queue.Enqueue(room.North.endb);
+                    distQueue.Enqueue(distance + 1);
+                }
+
+                if (room.South != null && !room.South.IsDestroyed && !visited.Contains(room.South.endb) && !queue.Contains(room.South.endb))
+                {
+                    queue.Enqueue(room.South.endb);
+                    distQueue.Enqueue(distance + 1);
+                }
+
+                if (room.West != null && !room.West.IsDestroyed && !visited.Contains(room.West.endb) && !queue.Contains(room.West.endb))
+                {
+                    queue.Enqueue(room.West.endb);
+                    distQueue.Enqueue(distance + 1);
+                }
+
+                if (room.East != null && !room.East.IsDestroyed && !visited.Contains(room.East.endb) && !queue.Contains(room.East.endb))
+                {
+                    queue.Enqueue(room.East.endb);
+                    distQueue.Enqueue(distance + 1);
+                }
+            }
+
+            return -1;
         }
     }
 }
