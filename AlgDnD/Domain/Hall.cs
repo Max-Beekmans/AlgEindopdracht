@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlgDnD
+namespace AlgDnD.Domain
 {
     public class Hall
     {
@@ -17,7 +17,8 @@ namespace AlgDnD
         public Room enda = null;
         public Room endb = null;
         public int Enemy = 0;
-        public bool destroyed = false;
+        public bool IsDestroyed { get; set; }
+        public bool IsVertical { get; set; }
 
         public Hall(Room a, Room b, int enemy = 0)
         {
@@ -28,12 +29,9 @@ namespace AlgDnD
             }
         }
 
-        public void Print()
+        public override string ToString()
         {
-            if (destroyed) {
-                Console.WriteLine('~');
-            }
-            Console.WriteLine('-' + Enemy + '-');
+            return IsDestroyed ? " ~ " : " "+Enemy+" ";
         }
     }
 }

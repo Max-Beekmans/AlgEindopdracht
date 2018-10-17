@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AlgDnD.Process;
 
 namespace AlgDnD
 {
@@ -10,7 +11,8 @@ namespace AlgDnD
     {
         static void Main(string[] args)
         {
-            Dungeon d = new Dungeon();
+            Controller controller = new Controller();
+            controller.Run();
         }
     }
 }
