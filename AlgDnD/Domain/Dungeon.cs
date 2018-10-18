@@ -10,6 +10,8 @@ namespace AlgDnD.Domain
     public class Dungeon
     {
         private Random _random;
+        private int _roomCount = 0;
+        private int _edgeCount = 0;
         public Room[,] ViewGrid { get; set; }
         List<Room> genVisited = new List<Room>();
 
@@ -34,6 +36,7 @@ namespace AlgDnD.Domain
             for (int x = 0; x < ViewGrid.GetLength(0); x++) {
                 for (int y = 0; y < ViewGrid.GetLength(1); y++) {
                     ViewGrid[x, y] = new Room((x + 1) * (y + 1));
+                    _roomCount++;
                 }
             }
         }
@@ -64,12 +67,14 @@ namespace AlgDnD.Domain
                     //Width range check
                     if (x + 1 < ViewGrid.GetLength(0)) {
                         ViewGrid[x, y] = LinkRooms(ViewGrid[x, y], ViewGrid[x + 1, y], "horizontal")[0];
+                        _edgeCount++;
                         //We already have an undirected graph so we only need one edge between nodes to go either way.
                         //ViewGrid[x + 1, y] = LinkRooms(ViewGrid[x, y], ViewGrid[x + 1, y], "horizontal")[1];
                     }
                     //Height range check
                     if (y + 1 < ViewGrid.GetLength(1)) {
                         ViewGrid[x, y] = LinkRooms(ViewGrid[x, y], ViewGrid[x, y + 1], "vertical")[0];
+                        _edgeCount++;
                         //ViewGrid[x, y + 1] = LinkRooms(ViewGrid[x, y], ViewGrid[x, y + 1], "vertical")[1];
                     }
                 }
@@ -164,6 +169,42 @@ namespace AlgDnD.Domain
                 return h.endb;
             }
             return h.enda;
+        }
+
+        //checks dungeon for a cycle
+        public bool isCycle()
+        {
+            int[] parent = new int[_roomCount];
+            //Have every node represent itself at first
+            for (int i = 0; i < _roomCount; ++i) {
+                parent[i] = -1;
+            }
+
+            for(int j = 0; j < _edgeCount; ++j) {
+                //TODO Somehow get a list of a all edges
+                //int x = find(parent, )
+            }
+            return false;
+        }
+
+        private int Find(int[] parent, int i)
+        {
+            //Check if this node represents itself
+            if (parent[i] == -1) {
+                return i;
+            }
+            //Else traverse down
+            return Find(parent, parent[i]);
+        }
+
+        private void Union(int[] parent, int x, int y)
+        {
+            int set1 = Find(parent, x);
+            int set2 = Find(parent, y);
+            //If the two sets aren't connected unify them
+            if (set1 != set2) {
+                parent[set1] = set2;
+            }
         }
     }
 }
