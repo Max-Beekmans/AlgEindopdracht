@@ -8,16 +8,55 @@ namespace AlgDnD.Domain
 {
     public class Room
     {
-        //private List<Hall> _adjacentEdges;
+        public List<Hall> AdjacentEdges { get; set; }
 
         public bool IsStart { get; set; }
         public bool IsEnd { get; set; }
         public bool IsVisited { get; set; }
 
-        public Hall North { get; set; }
-        public Hall South { get; set; }
-        public Hall West { get; set; }
-        public Hall East { get; set; }
+        public Hall North
+        {
+            get
+            {
+                return _north;
+            }
+            set
+            {
+                _north = value;
+                if (value != null) {
+                    AdjacentEdges.Add(value);
+                }
+            }
+        }
+        public Hall South
+        {
+            get
+            {
+                return _south;
+            }
+            set
+            {
+                _south = value;
+                if (value != null) {
+                    AdjacentEdges.Add(value);
+                }
+            }
+        }
+        public Hall West
+        {
+            get { return _west; }
+            set { _west = value; if (value != null) { AdjacentEdges.Add(value); } }
+        }
+        public Hall East
+        {
+            get { return _east; }
+            set { _east = value; if (value != null) { AdjacentEdges.Add(value); } }
+        }
+
+        private Hall _north = null;
+        private Hall _south = null;
+        private Hall _west = null;
+        private Hall _east = null;
 
         public int Id { get; set; }
 
@@ -25,10 +64,12 @@ namespace AlgDnD.Domain
         public Room(int id)
         {
             Id = id;
+            AdjacentEdges = new List<Hall>();
             North = null;
             South = null;
             West = null;
             East = null;
+
         }
 
         public override string ToString()
