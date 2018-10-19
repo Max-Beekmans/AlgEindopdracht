@@ -125,6 +125,7 @@ namespace AlgDnD.Domain
                     if(r != null && !visited.Contains(r)) {
                         visited.Add(r);
                         queue.Enqueue(r);
+                        distQueue.Enqueue(distance + 1);
                     }
                 }
 
@@ -175,6 +176,8 @@ namespace AlgDnD.Domain
         public bool isCycle()
         {
             int[] parent = new int[_roomCount];
+            Queue<Room> queue = new Queue<Room>();
+
             //Have every node represent itself at first
             for (int i = 0; i < _roomCount; ++i) {
                 parent[i] = -1;
