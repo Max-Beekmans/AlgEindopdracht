@@ -159,6 +159,32 @@ namespace AlgDnD.Domain
             return -1;
         }
 
+        public void Kruskal()
+        {
+            //get all edges
+            //using bfs like travesal?
+            Queue<Room> queue = new Queue<Room>();
+            List<Room> visited = new List<Room>();
+            List<Hall> edges = new List<Hall>();
+            List<Room> rooms = new List<Room>();
+
+            queue.Enqueue(Start);
+            while (queue.Count > 0) {
+                Room r = queue.Dequeue();
+                visited.Add(r);
+                for (int i = 0; i < r.AdjacentEdges.Count; ++i) {
+                    Hall edge = r.AdjacentEdges[i];
+                    edges.Add(edge);
+                    Room other = CheckHall(edge, r);
+                    if (other != null && !visited.Contains(other)) {
+                        visited.Add(other);
+                        queue.Enqueue(other);
+                    }
+                }
+            }
+
+        }
+
         //return null if any of the params are null or if the hall is destroyed
         //return opposite end of the hall adjacent to the room
         private Room CheckHall(Hall h, Room r)
