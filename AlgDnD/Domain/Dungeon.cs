@@ -12,6 +12,8 @@ namespace AlgDnD.Domain
         private Random _random;
         private int _roomCount = 0;
         private int _edgeCount = 0;
+        public List<Hall> Halls = new List<Hall>();
+        public List<Room> Rooms = new List<Room>();
         public Room[,] ViewGrid { get; set; }
         List<Room> genVisited = new List<Room>();
 
@@ -28,6 +30,7 @@ namespace AlgDnD.Domain
             _random = new Random();
             InitializeGrid();
             Generate();
+            GetEdgesAndRooms();
         }
 
         public void InitializeGrid()
@@ -84,7 +87,7 @@ namespace AlgDnD.Domain
         private Room[] LinkRooms(Room a, Room b, string orientation)
         {
             Room[] linkedRooms = new Room[2];
-            Hall hall = new Hall(a, b, _random.Next(10));
+            Hall hall = new Hall(a, b, _edgeCount, _random.Next(10));
             if (orientation == "horizontal") {
                 a.East = hall;
                 b.West = hall;
@@ -122,7 +125,7 @@ namespace AlgDnD.Domain
                 for (int i = 0; i < room.AdjacentEdges.Count; ++i) {
                     Hall edge = room.AdjacentEdges[i];
                     Room r = CheckHall(edge, room);
-                    if(r != null && !visited.Contains(r)) {
+                    if (r != null && !visited.Contains(r)) {
                         visited.Add(r);
                         queue.Enqueue(r);
                         distQueue.Enqueue(distance + 1);
@@ -159,7 +162,75 @@ namespace AlgDnD.Domain
             return -1;
         }
 
+        //return null if any of the params are null or if the hall is destroyed
+        //return opposite end of the hall adjacent to the room
+        private Room CheckHall(Hall h, Room r)
+        {
+            if (h == null || r == null || h.IsDestroyed)
+                return null;
+
+            if (h.enda == r) {
+                return h.endb;
+            }
+            return h.enda;
+        }
+
+        //for union by rank (optimization)
+        private struct Subset
+        {
+            public int parent { get; set; }
+            public int rank { get; set; }
+        }
+
         public void Kruskal()
+        {
+            if (Rooms == null || Halls == null)
+                GetEdgesAndRooms();
+            //sort edges(halls) by weight (enemy)
+            List<Hall> sorted_edges = Halls.OrderBy(o => o.Enemy).ToList();
+            Subset[] subsets = new Subset[_roomCount];
+            //If necessary?
+            Dictionary<int, int> ids = new Dictionary<int, int>();
+            
+            for (int i = 0; i < _roomCount; ++i) {
+                subsets[i].parent = Rooms[i].Id;
+                subsets[i].rank = 0;
+            }
+
+            for (int j = 0; j < _edgeCount; ++j) {
+                int x = Find(subsets, Halls[j].enda.Id);
+                int y = Find(subsets, Halls[j].endb.Id);
+
+                if (x != y) {
+                    Union(subsets, x, y);
+                } else {
+                    Halls[j].IsDestroyed = true;
+                }
+            }
+            UpdateEdges();
+        }
+
+        private int Find(Subset[] subset, int i)
+        {
+            //Check if this node represents itself
+            if (subset[i].parent == i) {
+                return i;
+            }
+            //Else traverse down
+            return Find(subset, subset[i].parent);
+        }
+
+        private void Union(Subset[] subset, int x, int y)
+        {
+            int set1 = Find(subset, x);
+            int set2 = Find(subset, y);
+            //If the two sets aren't connected unify them
+            if (set1 != set2) {
+                subset[set1].parent = set2;
+            }
+        }
+
+        private void GetEdgesAndRooms()
         {
             //get all edges
             //using bfs like travesal?
@@ -172,10 +243,12 @@ namespace AlgDnD.Domain
             while (queue.Count > 0) {
                 Room r = queue.Dequeue();
                 visited.Add(r);
+                rooms.Add(r);
                 for (int i = 0; i < r.AdjacentEdges.Count; ++i) {
                     Hall edge = r.AdjacentEdges[i];
                     edges.Add(edge);
                     Room other = CheckHall(edge, r);
+                    rooms.Add(other);
                     if (other != null && !visited.Contains(other)) {
                         visited.Add(other);
                         queue.Enqueue(other);
@@ -183,56 +256,32 @@ namespace AlgDnD.Domain
                 }
             }
 
+            this.Halls = edges;
+            this.Rooms = rooms;
+            this._edgeCount = edges.Count;
+            this._roomCount = rooms.Count;
         }
 
-        //return null if any of the params are null or if the hall is destroyed
-        //return opposite end of the hall adjacent to the room
-        private Room CheckHall(Hall h, Room r)
+        private void UpdateEdges()
         {
-            if (h == null || r == null || h.IsDestroyed)
-                return null;
-
-            if(h.enda == r) {
-                return h.endb;
-            }
-            return h.enda;
-        }
-
-        //checks dungeon for a cycle
-        public bool isCycle()
-        {
-            int[] parent = new int[_roomCount];
+            //get all edges
+            //using bfs like travesal?
             Queue<Room> queue = new Queue<Room>();
+            List<Room> visited = new List<Room>();
 
-            //Have every node represent itself at first
-            for (int i = 0; i < _roomCount; ++i) {
-                parent[i] = -1;
-            }
-
-            for(int j = 0; j < _edgeCount; ++j) {
-                //TODO Somehow get a list of a all edges
-                //int x = find(parent, )
-            }
-            return false;
-        }
-
-        private int Find(int[] parent, int i)
-        {
-            //Check if this node represents itself
-            if (parent[i] == -1) {
-                return i;
-            }
-            //Else traverse down
-            return Find(parent, parent[i]);
-        }
-
-        private void Union(int[] parent, int x, int y)
-        {
-            int set1 = Find(parent, x);
-            int set2 = Find(parent, y);
-            //If the two sets aren't connected unify them
-            if (set1 != set2) {
-                parent[set1] = set2;
+            queue.Enqueue(Start);
+            while (queue.Count > 0) {
+                Room r = queue.Dequeue();
+                visited.Add(r);
+                for (int i = 0; i < r.AdjacentEdges.Count; ++i) {
+                    Hall obj = Halls.Find(o => o.Id == r.AdjacentEdges[i].Id);
+                    r.AdjacentEdges[i] = obj;
+                    Room other = CheckHall(obj, r);
+                    if (other != null && !visited.Contains(other)) {
+                        visited.Add(other);
+                        queue.Enqueue(other);
+                    }
+                }
             }
         }
     }

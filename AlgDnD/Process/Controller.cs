@@ -52,7 +52,7 @@ namespace AlgDnD.Process
                         _outputview.IsTalismanOn = !_outputview.IsTalismanOn;
                         break;
                     case 2:
-                            
+                        _game.Dungeon.Kruskal();    
                         break;
                     case 3:
                             

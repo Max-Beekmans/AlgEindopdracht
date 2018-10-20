@@ -19,8 +19,9 @@ namespace AlgDnD.Domain
         public int Enemy = 0;
         public bool IsDestroyed { get; set; }
         public bool IsVertical { get; set; }
+        public int Id = 0;
 
-        public Hall(Room a, Room b, int enemy = 0)
+        public Hall(Room a, Room b, int Id, int enemy = 0)
         {
             if (a != null && b != null) {
                 enda = a;
