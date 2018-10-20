@@ -60,7 +60,6 @@ namespace AlgDnD.Domain
 
         public int Id { get; set; }
 
-
         public Room(int id)
         {
             Id = id;

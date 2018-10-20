@@ -12,7 +12,7 @@ namespace AlgDnD.Presentation
         private Game _game;
         private bool _drawing;
 
-        //temp var to not run bfs just once
+        //temp var to run bfs just once
         private int _distance = 0;
         private bool _talisman = false;
 

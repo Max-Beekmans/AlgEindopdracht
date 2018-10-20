@@ -38,7 +38,7 @@ namespace AlgDnD.Domain
             ViewGrid = new Room[Width, Height];
             for (int x = 0; x < ViewGrid.GetLength(0); x++) {
                 for (int y = 0; y < ViewGrid.GetLength(1); y++) {
-                    ViewGrid[x, y] = new Room((x + 1) * (y + 1));
+                    ViewGrid[x, y] = new Room(_roomCount);
                     _roomCount++;
                 }
             }
@@ -248,7 +248,6 @@ namespace AlgDnD.Domain
                     Hall edge = r.AdjacentEdges[i];
                     edges.Add(edge);
                     Room other = CheckHall(edge, r);
-                    rooms.Add(other);
                     if (other != null && !visited.Contains(other)) {
                         visited.Add(other);
                         queue.Enqueue(other);
