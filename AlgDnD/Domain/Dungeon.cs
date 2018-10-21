@@ -202,8 +202,9 @@ namespace AlgDnD.Domain
 
                     int i = 0;
                     while (nextRoom == null) {
-                        if (unvisited.Contains(CheckHall(halls[i], currentRoom))) {
-                            nextRoom = CheckHall(halls[i], currentRoom);
+                        Room other = CheckHall(halls[i], currentRoom);
+                        if (other != null && unvisited.Contains(other)) {
+                            nextRoom = other;
                             nextHall = halls[i];
                         }
                         i++;
