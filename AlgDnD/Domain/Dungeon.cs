@@ -49,24 +49,6 @@ namespace AlgDnD.Domain
         public void Generate()
         {
             _edgeCount = 0;
-            int startX = _random.Next(Width);
-            int startY = _random.Next(Height);
-
-            ViewGrid[startX, startY].IsStart = true;
-            Start = ViewGrid[startX, startY];
-
-            int endX = _random.Next(Width);
-            while (endX == startX) {
-                endX = _random.Next(Width);
-            }
-
-            int endY = _random.Next(Height);
-            while (endY == startY) {
-                endY = _random.Next(Height);
-            }
-
-            ViewGrid[endX, endY].IsEnd = true;
-            End = ViewGrid[endX, endY];
 
             for (int x = 0; x < ViewGrid.GetLength(0); x++) {
                 for (int y = 0; y < ViewGrid.GetLength(1); y++) {
@@ -85,6 +67,25 @@ namespace AlgDnD.Domain
                     }
                 }
             }
+
+            int startX = _random.Next(Width);
+            int startY = _random.Next(Height);
+
+            ViewGrid[startX, startY].IsStart = true;
+            Start = ViewGrid[startX, startY];
+
+            int endX = _random.Next(Width);
+            while (endX == startX) {
+                endX = _random.Next(Width);
+            }
+
+            int endY = _random.Next(Height);
+            while (endY == startY) {
+                endY = _random.Next(Height);
+            }
+
+            ViewGrid[endX, endY].IsEnd = true;
+            End = ViewGrid[endX, endY];
         }
 
         private Room[] LinkRooms(Room a, Room b, string orientation)
@@ -201,19 +202,19 @@ namespace AlgDnD.Domain
 
                     if (nextRoom != null && nextHall != null)
                     {
-                        if (nextHall.Id == currentRoom?.North?.Id)
+                        if (nextHall == currentRoom?.North)
                         {
                             directionString += "-> Noord";
                         }
-                        else if (nextHall.Id == currentRoom?.South?.Id)
+                        else if (nextHall == currentRoom?.South)
                         {
                             directionString += "-> Zuid";
                         }
-                        else if (nextHall.Id == currentRoom?.West?.Id)
+                        else if (nextHall == currentRoom?.West)
                         {
                             directionString += "-> West";
                         }
-                        else if (nextHall.Id == currentRoom?.East?.Id)
+                        else if (nextHall == currentRoom?.East)
                         {
                             directionString += "-> Oost";
                         }
