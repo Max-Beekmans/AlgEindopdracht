@@ -15,6 +15,7 @@ namespace AlgDnD.Presentation
         //temp var to run bfs just once
         private int _distance = 0;
         private bool _talisman = false;
+        private bool _handGrenade = false;
 
         public bool IsTalismanOn
         {
@@ -26,6 +27,15 @@ namespace AlgDnD.Presentation
             {
                 _talisman = value;
                 _distance = 0;
+            }
+        }
+
+        public bool IsHandGrenadeOn
+        {
+            get { return _handGrenade; }
+            set
+            {
+                _handGrenade = value;
             }
         }
 
@@ -102,7 +112,21 @@ namespace AlgDnD.Presentation
                 if (_distance == 0) {
                     _distance = _game.Dungeon.BreadthFirstSearch();
                 }
+                sb.Append("-> Talisman");
+                sb.Append("\r\n");
+                sb.Append("\r\n");
                 sb.Append("De talisman licht op en fluistert dat het eindpunt " + _distance + " stappen ver weg is");
+                sb.Append("\r\n");
+            }
+
+            if(IsHandGrenadeOn)
+            {
+                sb.Append("-> Handgranaat");
+                sb.Append("\r\n");
+                sb.Append("\r\n");
+                sb.Append("De kerker schudt in zijn grondvesten, de tegenstander in een aangenzende hallway is vermorzeld!");
+                sb.Append("\r\n");
+                sb.Append("Een donderend geluid maakt duidelijk dat gedeeltes van de kerker zijn ingestort...");
                 sb.Append("\r\n");
             }
         }
