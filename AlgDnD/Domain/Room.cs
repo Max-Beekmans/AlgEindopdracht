@@ -13,6 +13,7 @@ namespace AlgDnD.Domain
         public bool IsStart { get; set; }
         public bool IsEnd { get; set; }
         public bool IsVisited { get; set; }
+        public int Distance { get; set; }
 
         public Hall North
         {

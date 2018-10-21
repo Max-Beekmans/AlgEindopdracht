@@ -16,6 +16,7 @@ namespace AlgDnD.Presentation
         private int _distance = 0;
         private bool _talisman = false;
         private bool _handGrenade = false;
+        private bool _compass = false;
 
         public bool IsTalismanOn
         {
@@ -36,6 +37,15 @@ namespace AlgDnD.Presentation
             set
             {
                 _handGrenade = value;
+            }
+        }
+
+        public bool IsCompassOn
+        {
+            get { return _compass; }
+            set
+            {
+                _compass = value;
             }
         }
 
@@ -128,6 +138,17 @@ namespace AlgDnD.Presentation
                 sb.Append("\r\n");
                 sb.Append("Een donderend geluid maakt duidelijk dat gedeeltes van de kerker zijn ingestort...");
                 sb.Append("\r\n");
+            }
+
+            if(IsCompassOn)
+            {
+                sb.Append("-> Kompas");
+                sb.Append("\r\n");
+                sb.Append("\r\n");
+                sb.Append("Je haalt het kompas uit je zak. Het trilt in je hand en projecteert in lichtgevende letters op de muur:");
+                sb.Append("\r\n");
+                sb.Append("\r\n");
+                sb.Append(_game.Dungeon.Dijkstra());
             }
         }
 

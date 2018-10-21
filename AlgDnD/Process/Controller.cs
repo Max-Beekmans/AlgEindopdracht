@@ -56,7 +56,7 @@ namespace AlgDnD.Process
                         if(_outputview.IsHandGrenadeOn) _game.Dungeon.Kruskal();    
                         break;
                     case 3:
-                            
+                        _outputview.IsCompassOn = !_outputview.IsCompassOn;    
                         break;
                     case 4:
                         _game.Dungeon.InitializeGrid();

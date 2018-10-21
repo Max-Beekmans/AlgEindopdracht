@@ -40,6 +40,7 @@ namespace AlgDnD.Domain
             for (int x = 0; x < ViewGrid.GetLength(0); x++) {
                 for (int y = 0; y < ViewGrid.GetLength(1); y++) {
                     ViewGrid[x, y] = new Room(_roomCount);
+                    ViewGrid[x, y].Id = _roomCount;
                     _roomCount++;
                 }
             }
@@ -136,6 +137,86 @@ namespace AlgDnD.Domain
             }
 
             return -1;
+        }
+
+        public string Dijkstra()
+        {
+            HashSet<Room> unvisited = new HashSet<Room>(Rooms);
+            //distance with room id as key
+            int[] distance = new int[_roomCount];
+            Room currentRoom = null;
+            string directionString = "";
+            string enemyString = "";
+            int enemyCount = 0;
+
+            //set distance to infinity except for start room
+            foreach (Room room in unvisited)
+            {
+                if(room.Id == Start.Id)
+                {
+                    distance[room.Id] = 0;
+                    currentRoom = room;
+                } else
+                {
+                    distance[room.Id] = int.MaxValue;
+                }            
+            }
+
+            while(unvisited.Count > 0)
+            {
+                //update the distance for all neighbours with lower value if possible
+                foreach(Hall hall in currentRoom.AdjacentEdges)
+                {
+                    Room r = CheckHall(hall, currentRoom);
+                    int newDistance = currentRoom.Distance + hall.Enemy;
+                    if (unvisited.Contains(r) && newDistance < r.Distance )
+                    {
+                        distance[r.Id] = newDistance;
+                    }
+                }
+
+                unvisited.Remove(currentRoom);
+
+                if (currentRoom.Id != End.Id)
+                {
+                    //ordered list on enemy so First() will give the least hard path
+                    List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => h.Enemy).ToList();
+
+                    if (halls.First().Id == currentRoom.North.Id)
+                    {
+                        directionString += "-> Noord";
+                    } else if (halls.First().Id == currentRoom.South.Id)
+                    {
+                        directionString += "-> Zuid";
+                    } else if (halls.First().Id == currentRoom.West.Id)
+                    {
+                        directionString += "-> West";
+                    } else if (halls.First().Id == currentRoom.East.Id)
+                    {
+                        directionString += "-> Oost";
+                    }
+
+                    if(halls.First().Enemy > 0)
+                    {
+                        enemyString += "level " + halls.First().Enemy + ",";
+                        enemyCount++;
+                    }
+                    
+                    currentRoom = CheckHall(halls.First(), currentRoom);
+                    
+                } else
+                {
+                    unvisited.Clear();
+                }
+            }
+
+            string message = "";
+            message += directionString;
+            message += "\r\n\r\n";
+            message += enemyCount + " tegenstanders (";
+            message += enemyString + ")";
+
+            return message;
         }
 
         //return null if any of the params are null or if the hall is destroyed
