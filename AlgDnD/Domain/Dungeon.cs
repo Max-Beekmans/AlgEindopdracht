@@ -206,6 +206,7 @@ namespace AlgDnD.Domain
                     }
                     
                     currentRoom = CheckHall(halls.First(), currentRoom);
+                    halls.Remove(halls.First());
                     
                 } else
                 {

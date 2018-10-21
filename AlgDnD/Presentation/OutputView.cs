@@ -14,6 +14,7 @@ namespace AlgDnD.Presentation
 
         //temp var to run bfs just once
         private int _distance = 0;
+        private String _str = null;
         private bool _talisman = false;
         private bool _handGrenade = false;
         private bool _compass = false;
@@ -148,8 +149,10 @@ namespace AlgDnD.Presentation
                 sb.Append("Je haalt het kompas uit je zak. Het trilt in je hand en projecteert in lichtgevende letters op de muur:");
                 sb.Append("\r\n");
                 sb.Append("\r\n");
-                string str = _game.Dungeon.Dijkstra();
-                sb.Append(str);
+                if (_str == null) {
+                    _str = _game.Dungeon.Dijkstra();
+                }
+                sb.Append(_str);
             }
         }
 
