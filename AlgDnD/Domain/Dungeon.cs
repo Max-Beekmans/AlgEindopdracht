@@ -36,6 +36,7 @@ namespace AlgDnD.Domain
         public void InitializeGrid()
         {
             ViewGrid = new Room[Width, Height];
+            _roomCount = 0;
             for (int x = 0; x < ViewGrid.GetLength(0); x++) {
                 for (int y = 0; y < ViewGrid.GetLength(1); y++) {
                     ViewGrid[x, y] = new Room(_roomCount);
@@ -46,6 +47,7 @@ namespace AlgDnD.Domain
 
         public void Generate()
         {
+            _edgeCount = 0;
             int startX = _random.Next(Width);
             int startY = _random.Next(Height);
 
@@ -131,32 +133,6 @@ namespace AlgDnD.Domain
                         distQueue.Enqueue(distance + 1);
                     }
                 }
-
-                //Get all adjacent vertices and queue old way
-                //Room north_end = CheckHall(room.North, room);
-                //Room south_end = CheckHall(room.South, room);
-                //Room west_end = CheckHall(room.West, room);
-                //Room east_end = CheckHall(room.East, room);
-
-                //if (north_end != null && !visited.Contains(north_end) && !queue.Contains(north_end)) {
-                //    queue.Enqueue(north_end);
-                //    distQueue.Enqueue(distance + 1);
-                //}
-
-                //if (south_end != null && !visited.Contains(south_end) && !queue.Contains(south_end)) {
-                //    queue.Enqueue(south_end);
-                //    distQueue.Enqueue(distance + 1);
-                //}
-
-                //if (west_end != null && !visited.Contains(west_end) && !queue.Contains(west_end)) {
-                //    queue.Enqueue(west_end);
-                //    distQueue.Enqueue(distance + 1);
-                //}
-
-                //if (east_end != null && !visited.Contains(east_end) && !queue.Contains(east_end)) {
-                //    queue.Enqueue(east_end);
-                //    distQueue.Enqueue(distance + 1);
-                //}
             }
 
             return -1;
@@ -182,6 +158,12 @@ namespace AlgDnD.Domain
             public int rank;
         }
 
+        //Kruskals min span algorithm
+        //1. Take all edges from the tree and sort them based on weight. (or in our case Enemy)
+        //2. Loop through edges and find the subset of either end of the edge.
+        //3. If they aren't in the same subset unify them by rank.
+        //4. If they are it means this edge we want to add will make a cycle. We don't like cycles. So we destroy that edge.
+        //5. Update the edges
         public void Kruskal()
         {
             if (Rooms == null || Halls == null)
@@ -192,6 +174,7 @@ namespace AlgDnD.Domain
             //If necessary?
             Dictionary<int, int> ids = new Dictionary<int, int>();
             
+            //init subset and ids dictonary
             for (int i = 0; i < _roomCount; ++i) {
 
                 subsets[i].parent = i;
@@ -200,21 +183,27 @@ namespace AlgDnD.Domain
                 ids.Add(Rooms[i].Id, i);
             }
 
+            //loop through edges
             for (int j = 0; j < _edgeCount; ++j) {
-                int ia = ids[Halls[j].enda.Id];
-                int ib = ids[Halls[j].endb.Id];
+                int ia = ids[sorted_edges[j].enda.Id];
+                int ib = ids[sorted_edges[j].endb.Id];
                 int x = Find(subsets, Halls[j].enda.Id);
                 int y = Find(subsets, Halls[j].endb.Id);
 
                 if (x != y) {
                     Union(subsets, x, y);
                 } else {
-                    Halls[j].IsDestroyed = true;
+                    sorted_edges[j].IsDestroyed = true;
                 }
             }
+            Halls = sorted_edges;
             UpdateEdges();
         }
 
+        //Find (Path compression opt)
+        //finds the subsets of either elements and compares if they are equal.
+        //if they aren't we recursively set the root as parent of i
+        //this further reduces the amount of traversals
         private int Find(Subset[] subset, int i)
         {
             // find root and make root as parent of i (path compression)
@@ -224,16 +213,25 @@ namespace AlgDnD.Domain
             return subset[i].parent;
         }
 
+        //UnionByRank that attaches the smaller rank tree under the root of the high rank tree
+        //If the ranks are equal a new root note is assigned and it's rank is incremented
         private void Union(Subset[] subset, int x, int y)
         {
             int set1 = Find(subset, x);
             int set2 = Find(subset, y);
-            //If the two sets aren't connected unify them
-            if (set1 != set2) {
+            // Attach Smaller rank tree under root of high rank tree
+            // (Union by Rank)
+            if (subset[set1].rank < subset[set2].rank) {
                 subset[set1].parent = set2;
+            } else if (subset[set1].rank > subset[set2].rank) {
+                subset[set2].parent = set1;
+            } else {
+                subset[set2].parent = set1;
+                subset[set1].rank++;
             }
         }
-
+        //BFS through the tree and collect all rooms and edges in lists.
+        //Also updates edge and room count
         private void GetEdgesAndRooms()
         {
             //get all edges
@@ -250,7 +248,9 @@ namespace AlgDnD.Domain
                 rooms.Add(r);
                 for (int i = 0; i < r.AdjacentEdges.Count; ++i) {
                     Hall edge = r.AdjacentEdges[i];
-                    edges.Add(edge);
+                    if (!edges.Contains(edge)) {
+                        edges.Add(edge);
+                    }
                     Room other = CheckHall(edge, r);
                     if (other != null && !visited.Contains(other)) {
                         visited.Add(other);
@@ -265,6 +265,8 @@ namespace AlgDnD.Domain
             this._roomCount = rooms.Count;
         }
 
+        //BFS through the tree and sets all edges to it's copy in the hall list
+        //I know it's a clunky way to update a datastructure like this couse of the find operation on list.
         private void UpdateEdges()
         {
             //get all edges
