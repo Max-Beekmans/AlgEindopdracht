@@ -9,6 +9,7 @@ namespace AlgDnD.Domain
 {
     public class Dungeon
     {
+        private bool inuse = false;
         private Random _random;
         private int _roomCount = 0;
         private int _edgeCount = 0;
@@ -162,6 +163,9 @@ namespace AlgDnD.Domain
 
         public string Dijkstra()
         {
+            if (inuse) {
+                return "already in use";
+            }
             shortest_path.Clear();
             HashSet<Room> unvisited = new HashSet<Room>(Rooms);
             //distance with room id as key
@@ -184,10 +188,11 @@ namespace AlgDnD.Domain
 
             while (unvisited.Count > 0) {
                 //update the distance for all neighbours with lower value if possible
+                //TODO if it's not in shortest path?
                 foreach (Hall hall in currentRoom.AdjacentEdges) {
                     Room r = CheckHall(hall, currentRoom);
-                    int newDistance = currentRoom.Distance + hall.Enemy;
-                    if (r != null && unvisited.Contains(r) && newDistance < r.Distance) {
+                    int newDistance = distance[currentRoom.Id] + hall.Enemy;
+                    if (r != null && unvisited.Contains(r) && newDistance < distance[r.Id] && !shortest_path.Contains(hall)) {
                         distance[r.Id] = newDistance;
                     }
                 }
@@ -196,14 +201,15 @@ namespace AlgDnD.Domain
 
                 if (currentRoom.Id != End.Id) {
                     //ordered list on enemy so First() will give the least hard path
-                    List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => h.Enemy).ToList();
+                    List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => distance[CheckHall(h, currentRoom).Id]).ToList();
+                    //List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => h.Enemy).ToList();
                     Room nextRoom = null;
                     Hall nextHall = null;
 
                     int i = 0;
                     while (nextRoom == null) {
                         Room other = CheckHall(halls[i], currentRoom);
-                        if (other != null && unvisited.Contains(other)) {
+                        if (other != null && unvisited.Contains(other) && distance[other.Id] < distance[currentRoom.Id]) {
                             nextRoom = other;
                             nextHall = halls[i];
                         }

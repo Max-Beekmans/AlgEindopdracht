@@ -153,6 +153,8 @@ namespace AlgDnD.Presentation
                     _str = _game.Dungeon.Dijkstra();
                 }
                 sb.Append(_str);
+            } else {
+                this._str = null;
             }
         }
 
