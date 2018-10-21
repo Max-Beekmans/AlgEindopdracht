@@ -209,13 +209,17 @@ namespace AlgDnD.Domain
                     {
                         //ordered list on enemy so First() will give the least hard path
                         int min_index = this.minDistance(distance, unvisited);
+
+                        if (min_index < 0) {
+                            nextRoom = null;
+                        }
                         //List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => h.Enemy).ToList();
                         nextRoom = Rooms.Find(r => r.Id == min_index);
 
                         for (int i = 0; i < currentRoom.AdjacentEdges.Count; ++i)
                         {
                             Room r = CheckHall(currentRoom.AdjacentEdges[i], currentRoom);
-                            if (r == nextRoom && !shortest_path.Contains(currentRoom.AdjacentEdges[i]))
+                            if (r == nextRoom && !shortest_path.Contains(currentRoom.AdjacentEdges[i]) && distance[nextRoom.Id] != int.MaxValue)
                             {
                                 nextHall = currentRoom.AdjacentEdges[i];
                                 break;
@@ -279,10 +283,10 @@ namespace AlgDnD.Domain
         private int minDistance(int[] distance, List<Room> unvisited)
         {
             int min = int.MaxValue;
-            int min_index = 0;
+            int min_index = -1;
 
             for (int i = 0; i < distance.Length; ++i) {
-                if (unvisited.Find(r => r.Id == i) != null && distance[i] <= min) {
+                if (unvisited.Find(r => r.Id == i) != null && distance[i] < min) {
                     min = distance[i];
                     min_index = i;
                 }
