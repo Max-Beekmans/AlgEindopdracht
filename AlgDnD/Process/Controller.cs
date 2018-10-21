@@ -52,7 +52,8 @@ namespace AlgDnD.Process
                         _outputview.IsTalismanOn = !_outputview.IsTalismanOn;
                         break;
                     case 2:
-                        _game.Dungeon.Kruskal();    
+                        _outputview.IsHandGrenadeOn = !_outputview.IsHandGrenadeOn;
+                        if(_outputview.IsHandGrenadeOn) _game.Dungeon.Kruskal();    
                         break;
                     case 3:
                             
