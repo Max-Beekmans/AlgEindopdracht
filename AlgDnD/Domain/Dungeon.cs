@@ -148,6 +148,7 @@ namespace AlgDnD.Domain
             //distance with room id as key
             int[] distance = new int[_roomCount];
             Room currentRoom = null;
+            Room prevRoom = null;
             string directionString = "";
             string enemyString = "";
             int enemyCount = 0;
@@ -184,29 +185,48 @@ namespace AlgDnD.Domain
                 {
                     //ordered list on enemy so First() will give the least hard path
                     List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => h.Enemy).ToList();
+                    Room nextRoom = null;
+                    Hall nextHall = null;
 
-                    if (halls.First().Id == currentRoom?.North?.Id)
+                    int i = 0;
+                    while(nextRoom == null)
                     {
-                        directionString += "-> Noord";
-                    } else if (halls.First().Id == currentRoom?.South?.Id)
-                    {
-                        directionString += "-> Zuid";
-                    } else if (halls.First().Id == currentRoom?.West?.Id)
-                    {
-                        directionString += "-> West";
-                    } else if (halls.First().Id == currentRoom?.East?.Id)
-                    {
-                        directionString += "-> Oost";
+                        if(unvisited.Contains(CheckHall(halls[i], currentRoom)))
+                        {
+                            nextRoom = CheckHall(halls[i], currentRoom);
+                            nextHall = halls[i];
+                        }
+                        i++;
                     }
 
-                    if(halls.First().Enemy > 0)
+                    if (nextRoom != null && nextHall != null)
                     {
-                        enemyString += "level " + halls.First().Enemy + ",";
-                        enemyCount++;
+                        if (nextHall.Id == currentRoom?.North?.Id)
+                        {
+                            directionString += "-> Noord";
+                        }
+                        else if (nextHall.Id == currentRoom?.South?.Id)
+                        {
+                            directionString += "-> Zuid";
+                        }
+                        else if (nextHall.Id == currentRoom?.West?.Id)
+                        {
+                            directionString += "-> West";
+                        }
+                        else if (nextHall.Id == currentRoom?.East?.Id)
+                        {
+                            directionString += "-> Oost";
+                        }
+
+                        if (nextHall.Enemy > 0)
+                        {
+                            enemyString += "level " + nextHall.Enemy + ",";
+                            enemyCount++;
+                        }
+
+                        prevRoom = currentRoom;
+                        currentRoom = nextRoom;
                     }
-                    
-                    currentRoom = CheckHall(halls.First(), currentRoom);
-                    halls.Remove(halls.First());
                     
                 } else
                 {
