@@ -176,10 +176,10 @@ namespace AlgDnD.Domain
         }
 
         //for union by rank (optimization)
-        private struct Subset
+        struct Subset
         {
-            public int parent { get; set; }
-            public int rank { get; set; }
+            public int parent;
+            public int rank;
         }
 
         public void Kruskal()
@@ -193,11 +193,16 @@ namespace AlgDnD.Domain
             Dictionary<int, int> ids = new Dictionary<int, int>();
             
             for (int i = 0; i < _roomCount; ++i) {
-                subsets[i].parent = Rooms[i].Id;
+
+                subsets[i].parent = i;
                 subsets[i].rank = 0;
+                //map indices to roomid
+                ids.Add(Rooms[i].Id, i);
             }
 
             for (int j = 0; j < _edgeCount; ++j) {
+                int ia = ids[Halls[j].enda.Id];
+                int ib = ids[Halls[j].endb.Id];
                 int x = Find(subsets, Halls[j].enda.Id);
                 int y = Find(subsets, Halls[j].endb.Id);
 
@@ -212,12 +217,11 @@ namespace AlgDnD.Domain
 
         private int Find(Subset[] subset, int i)
         {
-            //Check if this node represents itself
-            if (subset[i].parent == i) {
-                return i;
+            // find root and make root as parent of i (path compression)
+            if (subset[i].parent != i) {
+                subset[i].parent = Find(subset, subset[i].parent);
             }
-            //Else traverse down
-            return Find(subset, subset[i].parent);
+            return subset[i].parent;
         }
 
         private void Union(Subset[] subset, int x, int y)
