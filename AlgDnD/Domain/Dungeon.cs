@@ -187,7 +187,7 @@ namespace AlgDnD.Domain
                 foreach (Hall hall in currentRoom.AdjacentEdges) {
                     Room r = CheckHall(hall, currentRoom);
                     int newDistance = currentRoom.Distance + hall.Enemy;
-                    if (unvisited.Contains(r) && newDistance < r.Distance) {
+                    if (r != null && unvisited.Contains(r) && newDistance < r.Distance) {
                         distance[r.Id] = newDistance;
                     }
                 }
