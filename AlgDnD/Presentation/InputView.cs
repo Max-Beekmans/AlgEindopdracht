@@ -46,6 +46,7 @@ namespace AlgDnD.Presentation
                     case ConsoleKey.H: return 2;
                     case ConsoleKey.C: return 3;
                     case ConsoleKey.G: return 4;
+                    case ConsoleKey.F: return 5;
                     default:
                         Console.WriteLine("Invalid input!");
                         continue;

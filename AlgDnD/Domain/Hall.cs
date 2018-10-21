@@ -23,6 +23,7 @@ namespace AlgDnD.Domain
 
         public Hall(Room a, Room b, int Id, int enemy = 0)
         {
+            this.Id = Id;
             if (a != null && b != null) {
                 enda = a;
                 endb = b;

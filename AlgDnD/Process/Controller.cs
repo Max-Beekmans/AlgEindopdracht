@@ -63,6 +63,9 @@ namespace AlgDnD.Process
                         _game.Dungeon.InitializeGrid();
                         _game.Dungeon.Generate();
                         break;
+                    case 5:
+                        _game.Dungeon.ChangeWeight();
+                        break;
                 }
             }
         }

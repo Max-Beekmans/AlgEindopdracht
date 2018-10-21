@@ -12,6 +12,7 @@ namespace AlgDnD.Domain
         private Random _random;
         private int _roomCount = 0;
         private int _edgeCount = 0;
+        public List<Hall> shortest_path = new List<Hall>();
         public List<Hall> Halls = new List<Hall>();
         public List<Room> Rooms = new List<Room>();
         public Room[,] ViewGrid { get; set; }
@@ -107,6 +108,21 @@ namespace AlgDnD.Domain
             return linkedRooms;
         }
 
+        public void ChangeWeight()
+        {
+            if (shortest_path != null && shortest_path.Count > 1) {
+                int index = _random.Next(shortest_path.Count);
+                Hall temp = shortest_path[index];
+                Hall obj = Halls.Find(o => o.Id == temp.Id);
+                obj.Enemy = (obj.Enemy * 2);
+                UpdateEdges();
+            } else {
+                Dijkstra();
+                ChangeWeight();
+            }
+            //terminate since we don't have a shortest_path yet
+        }
+
         //Breadth First Search starts at the starting node and goes past every adjacent edge.
         //If the adjacent room hasn't been visited it will be added to the queue
         //Then a new room will be picked from the queue until the queue is eventually empty and we have visited all the reachable vertices in the graph.
@@ -146,6 +162,7 @@ namespace AlgDnD.Domain
 
         public string Dijkstra()
         {
+            shortest_path.Clear();
             HashSet<Room> unvisited = new HashSet<Room>(Rooms);
             //distance with room id as key
             int[] distance = new int[_roomCount];
@@ -210,6 +227,7 @@ namespace AlgDnD.Domain
 
                         prevRoom = currentRoom;
                         currentRoom = nextRoom;
+                        shortest_path.Add(nextHall);
                     }
 
                 } else {
