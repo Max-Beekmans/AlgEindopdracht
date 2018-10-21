@@ -185,16 +185,16 @@ namespace AlgDnD.Domain
                     //ordered list on enemy so First() will give the least hard path
                     List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => h.Enemy).ToList();
 
-                    if (halls.First().Id == currentRoom.North.Id)
+                    if (halls.First().Id == currentRoom?.North?.Id)
                     {
                         directionString += "-> Noord";
-                    } else if (halls.First().Id == currentRoom.South.Id)
+                    } else if (halls.First().Id == currentRoom?.South?.Id)
                     {
                         directionString += "-> Zuid";
-                    } else if (halls.First().Id == currentRoom.West.Id)
+                    } else if (halls.First().Id == currentRoom?.West?.Id)
                     {
                         directionString += "-> West";
-                    } else if (halls.First().Id == currentRoom.East.Id)
+                    } else if (halls.First().Id == currentRoom?.East?.Id)
                     {
                         directionString += "-> Oost";
                     }

@@ -148,7 +148,8 @@ namespace AlgDnD.Presentation
                 sb.Append("Je haalt het kompas uit je zak. Het trilt in je hand en projecteert in lichtgevende letters op de muur:");
                 sb.Append("\r\n");
                 sb.Append("\r\n");
-                sb.Append(_game.Dungeon.Dijkstra());
+                string str = _game.Dungeon.Dijkstra();
+                sb.Append(str);
             }
         }
 
