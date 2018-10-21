@@ -143,15 +143,15 @@ namespace AlgDnD.Presentation
 
             if(IsCompassOn)
             {
+                if (_str == null) {
+                   _str = _game.Dungeon.Dijkstra();
+                }
                 sb.Append("-> Kompas");
                 sb.Append("\r\n");
                 sb.Append("\r\n");
                 sb.Append("Je haalt het kompas uit je zak. Het trilt in je hand en projecteert in lichtgevende letters op de muur:");
                 sb.Append("\r\n");
                 sb.Append("\r\n");
-                if (_str == null) {
-                    _str = _game.Dungeon.Dijkstra();
-                }
                 sb.Append(_str);
             } else {
                 this._str = null;

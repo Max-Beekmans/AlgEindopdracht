@@ -167,7 +167,7 @@ namespace AlgDnD.Domain
                 return "already in use";
             }
             shortest_path.Clear();
-            HashSet<Room> unvisited = new HashSet<Room>(Rooms);
+            List<Room> unvisited = new List<Room>(Rooms);
             //distance with room id as key
             int[] distance = new int[_roomCount];
             Room currentRoom = null;
@@ -187,6 +187,7 @@ namespace AlgDnD.Domain
             }
 
             while (unvisited.Count > 0) {
+
                 //update the distance for all neighbours with lower value if possible
                 //TODO if it's not in shortest path?
                 foreach (Hall hall in currentRoom.AdjacentEdges) {
@@ -201,20 +202,27 @@ namespace AlgDnD.Domain
 
                 if (currentRoom.Id != End.Id) {
                     //ordered list on enemy so First() will give the least hard path
-                    List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => distance[CheckHall(h, currentRoom).Id]).ToList();
+                    int min_index = this.minDistance(distance, unvisited);
                     //List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => h.Enemy).ToList();
-                    Room nextRoom = null;
+                    Room nextRoom = Rooms.Find(r => r.Id == min_index);
                     Hall nextHall = null;
-
-                    int i = 0;
-                    while (nextRoom == null) {
-                        Room other = CheckHall(halls[i], currentRoom);
-                        if (other != null && unvisited.Contains(other) && distance[other.Id] < distance[currentRoom.Id]) {
-                            nextRoom = other;
-                            nextHall = halls[i];
+                    for (int i = 0; i < currentRoom.AdjacentEdges.Count; ++i) {
+                        Room r = CheckHall(currentRoom.AdjacentEdges[i], currentRoom);
+                        if (r == nextRoom) {
+                            nextHall = currentRoom.AdjacentEdges[i];
                         }
-                        i++;
                     }
+
+
+                    //int i = 0;
+                    //while (nextRoom == null) {
+                    //    Room other = CheckHall(halls[i], currentRoom);
+                    //    if (other != null && unvisited.Contains(other) && distance[other.Id] < distance[currentRoom.Id]) {
+                    //        nextRoom = other;
+                    //        nextHall = halls[i];
+                    //    }
+                    //    i++;
+                    //}
 
                     if (nextRoom != null && nextHall != null) {
                         if (nextHall == currentRoom?.North) {
@@ -249,6 +257,20 @@ namespace AlgDnD.Domain
             message += enemyString + ")";
 
             return message;
+        }
+
+        private int minDistance(int[] distance, List<Room> unvisited)
+        {
+            int min = int.MaxValue;
+            int min_index = 0;
+
+            for (int i = 0; i < distance.Length; ++i) {
+                if (unvisited.Find(r => r.Id == i) != null && distance[i] <= min) {
+                    min = distance[i];
+                    min_index = i;
+                }
+            }
+            return min_index;
         }
 
         //return null if any of the params are null or if the hall is destroyed

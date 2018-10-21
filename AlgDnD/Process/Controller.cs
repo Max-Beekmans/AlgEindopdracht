@@ -57,7 +57,6 @@ namespace AlgDnD.Process
                         break;
                     case 3:
                         _outputview.IsCompassOn = !_outputview.IsCompassOn;
-                        string message = _game.Dungeon.Dijkstra();
                         break;
                     case 4:
                         _game.Dungeon.InitializeGrid();
