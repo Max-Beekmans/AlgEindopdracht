@@ -49,7 +49,8 @@ namespace AlgDnD.Domain
         public void Generate()
         {
             _edgeCount = 0;
-
+            Rooms.Clear();
+            Halls.Clear();
             for (int x = 0; x < ViewGrid.GetLength(0); x++) {
                 for (int y = 0; y < ViewGrid.GetLength(1); y++) {
                     //Width range check
@@ -155,72 +156,54 @@ namespace AlgDnD.Domain
             int enemyCount = 0;
 
             //set distance to infinity except for start room
-            foreach (Room room in unvisited)
-            {
-                if(room.Id == Start.Id)
-                {
+            foreach (Room room in unvisited) {
+                if (room.Id == Start.Id) {
                     distance[room.Id] = 0;
                     currentRoom = room;
-                } else
-                {
+                } else {
                     distance[room.Id] = int.MaxValue;
-                }            
+                }
             }
 
-            while(unvisited.Count > 0)
-            {
+            while (unvisited.Count > 0) {
                 //update the distance for all neighbours with lower value if possible
-                foreach(Hall hall in currentRoom.AdjacentEdges)
-                {
+                foreach (Hall hall in currentRoom.AdjacentEdges) {
                     Room r = CheckHall(hall, currentRoom);
                     int newDistance = currentRoom.Distance + hall.Enemy;
-                    if (unvisited.Contains(r) && newDistance < r.Distance )
-                    {
+                    if (unvisited.Contains(r) && newDistance < r.Distance) {
                         distance[r.Id] = newDistance;
                     }
                 }
 
                 unvisited.Remove(currentRoom);
 
-                if (currentRoom.Id != End.Id)
-                {
+                if (currentRoom.Id != End.Id) {
                     //ordered list on enemy so First() will give the least hard path
                     List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => h.Enemy).ToList();
                     Room nextRoom = null;
                     Hall nextHall = null;
 
                     int i = 0;
-                    while(nextRoom == null)
-                    {
-                        if(unvisited.Contains(CheckHall(halls[i], currentRoom)))
-                        {
+                    while (nextRoom == null) {
+                        if (unvisited.Contains(CheckHall(halls[i], currentRoom))) {
                             nextRoom = CheckHall(halls[i], currentRoom);
                             nextHall = halls[i];
                         }
                         i++;
                     }
 
-                    if (nextRoom != null && nextHall != null)
-                    {
-                        if (nextHall == currentRoom?.North)
-                        {
+                    if (nextRoom != null && nextHall != null) {
+                        if (nextHall == currentRoom?.North) {
                             directionString += "-> Noord";
-                        }
-                        else if (nextHall == currentRoom?.South)
-                        {
+                        } else if (nextHall == currentRoom?.South) {
                             directionString += "-> Zuid";
-                        }
-                        else if (nextHall == currentRoom?.West)
-                        {
+                        } else if (nextHall == currentRoom?.West) {
                             directionString += "-> West";
-                        }
-                        else if (nextHall == currentRoom?.East)
-                        {
+                        } else if (nextHall == currentRoom?.East) {
                             directionString += "-> Oost";
                         }
 
-                        if (nextHall.Enemy > 0)
-                        {
+                        if (nextHall.Enemy > 0) {
                             enemyString += "level " + nextHall.Enemy + ",";
                             enemyCount++;
                         }
@@ -228,9 +211,8 @@ namespace AlgDnD.Domain
                         prevRoom = currentRoom;
                         currentRoom = nextRoom;
                     }
-                    
-                } else
-                {
+
+                } else {
                     unvisited.Clear();
                 }
             }
@@ -272,7 +254,7 @@ namespace AlgDnD.Domain
         //5. Update the edges
         public void Kruskal()
         {
-            if (Rooms == null || Halls == null)
+            if (Rooms == null || Halls == null || Rooms.Count < 1 || Halls.Count < 1)
                 GetEdgesAndRooms();
             //sort edges(halls) by weight (enemy)
             List<Hall> sorted_edges = Halls.OrderBy(o => o.Enemy).ToList();
