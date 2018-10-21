@@ -105,6 +105,9 @@ namespace AlgDnD.Domain
             return linkedRooms;
         }
 
+        //Breadth First Search starts at the starting node and goes past every adjacent edge.
+        //If the adjacent room hasn't been visited it will be added to the queue
+        //Then a new room will be picked from the queue until the queue is eventually empty and we have visited all the reachable vertices in the graph.
         public int BreadthFirstSearch()
         {
             Queue<Room> queue = new Queue<Room>();
@@ -268,8 +271,8 @@ namespace AlgDnD.Domain
             for (int j = 0; j < _edgeCount; ++j) {
                 int ia = ids[sorted_edges[j].enda.Id];
                 int ib = ids[sorted_edges[j].endb.Id];
-                int x = Find(subsets, Halls[j].enda.Id);
-                int y = Find(subsets, Halls[j].endb.Id);
+                int x = Find(subsets, ia);
+                int y = Find(subsets, ib);
 
                 if (x != y) {
                     Union(subsets, x, y);
