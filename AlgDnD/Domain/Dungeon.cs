@@ -201,18 +201,35 @@ namespace AlgDnD.Domain
                 unvisited.Remove(currentRoom);
 
                 if (currentRoom.Id != End.Id) {
-                    //ordered list on enemy so First() will give the least hard path
-                    int min_index = this.minDistance(distance, unvisited);
-                    //List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => h.Enemy).ToList();
-                    Room nextRoom = Rooms.Find(r => r.Id == min_index);
+
                     Hall nextHall = null;
-                    for (int i = 0; i < currentRoom.AdjacentEdges.Count; ++i) {
-                        Room r = CheckHall(currentRoom.AdjacentEdges[i], currentRoom);
-                        if (r == nextRoom) {
-                            nextHall = currentRoom.AdjacentEdges[i];
+                    Room nextRoom = null;
+
+                    while (nextHall == null)
+                    {
+                        //ordered list on enemy so First() will give the least hard path
+                        int min_index = this.minDistance(distance, unvisited);
+                        //List<Hall> halls = currentRoom.AdjacentEdges.OrderBy(h => h.Enemy).ToList();
+                        nextRoom = Rooms.Find(r => r.Id == min_index);
+
+                        for (int i = 0; i < currentRoom.AdjacentEdges.Count; ++i)
+                        {
+                            Room r = CheckHall(currentRoom.AdjacentEdges[i], currentRoom);
+                            if (r == nextRoom && !shortest_path.Contains(currentRoom.AdjacentEdges[i]))
+                            {
+                                nextHall = currentRoom.AdjacentEdges[i];
+                                break;
+                            }
+                        }
+
+                        if (nextHall == null)
+                        {
+                            unvisited.Remove(nextRoom);
                         }
                     }
+                    
 
+                    
 
                     //int i = 0;
                     //while (nextRoom == null) {
